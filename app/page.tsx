@@ -23,9 +23,9 @@ export default function Home() {
 
       <WhyChooseUs />
 
-      <HowItWorks />
-
       <Reviews />
+
+      <HowItWorks />
 
       <ServiceAreas />
 

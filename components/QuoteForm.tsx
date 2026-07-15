@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const services = [
   "Household Rubbish Removal",
@@ -26,6 +26,20 @@ export default function QuoteForm() {
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+  const urls = photos.map((photo) =>
+    URL.createObjectURL(photo)
+  );
+
+  setPreviewUrls(urls);
+
+}, [photos]);
+
 
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -38,19 +52,9 @@ export default function QuoteForm() {
     const form = new FormData(e.currentTarget);
 
 
-    const files = form
-      .getAll("photos")
-      .filter(
-        (file): file is File =>
-          file instanceof File && file.size > 0
-      )
-      .slice(0, 5);
+    const uploadedPhotos = await Promise.all(
 
-
-
-    const photos = await Promise.all(
-
-      files.map(async (file) => {
+      photos.map(async (file) => {
 
         const base64 = await new Promise<string>((resolve, reject) => {
 
@@ -106,7 +110,7 @@ export default function QuoteForm() {
 
       description: form.get("description"),
 
-      photos,
+      photos: uploadedPhotos,
 
     };
 
@@ -145,46 +149,85 @@ export default function QuoteForm() {
 
 
 
-  if (submitted) {
+function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
 
-    return (
+  const selectedFiles = Array.from(e.target.files || []);
 
-      <section
-        id="quote"
-        className="bg-white px-6 py-20"
-      >
-
-        <div className="mx-auto max-w-4xl rounded-xl bg-tipdash-light p-10 text-center">
+  if (selectedFiles.length === 0) return;
 
 
-          <h2 className="text-4xl font-bold text-tipdash-dark">
+  setPhotos((currentPhotos) => {
 
-            Thanks for your enquiry!
+    const remainingSlots = 5 - currentPhotos.length;
 
-          </h2>
+    return [
+      ...currentPhotos,
+      ...selectedFiles.slice(0, remainingSlots),
+    ];
 
-
-          <p className="mt-4 text-gray-700">
-
-            We’ve received your quote request and will be in touch shortly.
-
-          </p>
+  });
 
 
-          <p className="mt-3 text-gray-700">
+  e.target.value = "";
 
-            If your job is urgent, feel free to give us a call.
-
-          </p>
+}
 
 
-        </div>
+  function removePhoto(index: number) {
 
-      </section>
-
+    setPhotos((currentPhotos) =>
+      currentPhotos.filter((_, i) => i !== index)
     );
 
   }
+
+
+
+  if (submitted) {
+
+  return (
+
+    <section
+      id="quote"
+      className="bg-white px-6 py-20"
+    >
+
+      <div className="mx-auto max-w-4xl rounded-xl bg-tipdash-light p-10 text-center shadow-sm">
+
+
+        <h2 className="text-4xl font-bold text-tipdash-dark">
+          Thanks, we’ve received your request!
+        </h2>
+
+
+        <p className="mx-auto mt-5 max-w-2xl text-gray-700">
+          We’ll review your details and get back to you as soon as possible
+          with your quote.
+        </p>
+
+
+        <p className="mx-auto mt-3 max-w-2xl text-gray-700">
+          If your job is urgent, give us a call and we’ll let you know how
+          quickly we can help.
+        </p>
+
+
+
+        <a
+          href="tel:+61481767433"
+          className="mt-8 inline-block rounded-lg bg-tipdash-dark px-8 py-3 font-semibold text-white transition hover:opacity-90"
+        >
+          Call TipDash
+        </a>
+
+
+      </div>
+
+    </section>
+
+  );
+
+}
 
 
 
@@ -200,16 +243,18 @@ export default function QuoteForm() {
 
 
         <h2 className="text-center text-4xl font-bold text-black">
-
           Get Your Free Quote
-
         </h2>
 
 
         <p className="mx-auto mt-4 max-w-2xl text-center text-gray-700">
+          Send us your details and photos of the job. We’ll review everything
+          and get back to you with a quote.
+        </p>
 
-          Send us your details and photos of the job. We’ll review everything and get back to you with a quote.
 
+        <p className="mt-3 text-center text-sm text-gray-600">
+          Fields marked with * are required.
         </p>
 
 
@@ -228,29 +273,26 @@ export default function QuoteForm() {
 
 
             <input
-
               name="name"
-
-              placeholder="Your Name"
-
+              placeholder="Your Name *"
               required
-
               className="rounded-lg bg-white p-3 text-black"
-
             />
 
 
 
             <input
-
               name="phone"
-
-              placeholder="Phone Number"
-
+              placeholder="Phone Number *"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9 ]*"
               required
-
+              onInput={(e) => {
+                e.currentTarget.value =
+                  e.currentTarget.value.replace(/[^0-9 ]/g, "");
+              }}
               className="rounded-lg bg-white p-3 text-black"
-
             />
 
 
@@ -260,30 +302,20 @@ export default function QuoteForm() {
 
 
           <input
-
             name="email"
-
             placeholder="Email Address"
-
             type="email"
-
             className="rounded-lg bg-white p-3 text-black"
-
           />
 
 
 
 
           <input
-
             name="suburb"
-
-            placeholder="Suburb"
-
+            placeholder="Suburb *"
             required
-
             className="rounded-lg bg-white p-3 text-black"
-
           />
 
 
@@ -291,22 +323,20 @@ export default function QuoteForm() {
 
 
           <select
-
             name="service"
-
+            required
             className="rounded-lg bg-white p-3 text-black"
-
           >
 
-            <option>Select Service Type</option>
+            <option value="">
+              Select Service Type *
+            </option>
 
 
             {services.map((service) => (
 
               <option key={service}>
-
                 {service}
-
               </option>
 
             ))}
@@ -319,22 +349,20 @@ export default function QuoteForm() {
 
 
           <select
-
             name="urgency"
-
+            required
             className="rounded-lg bg-white p-3 text-black"
-
           >
 
-            <option>When do you need it?</option>
+            <option value="">
+              When do you need it? *
+            </option>
 
 
             {urgencyOptions.map((option) => (
 
               <option key={option}>
-
                 {option}
-
               </option>
 
             ))}
@@ -348,15 +376,10 @@ export default function QuoteForm() {
 
 
           <textarea
-
             name="description"
-
             placeholder="Tell us about the job..."
-
             rows={5}
-
             className="rounded-lg bg-white p-3 text-black"
-
           />
 
 
@@ -364,28 +387,78 @@ export default function QuoteForm() {
 
 
 
-          <label className="font-semibold text-black">
+  <div>
+
+  <label className="block font-semibold text-black">
+    Upload photos (helps us quote faster)
+  </label>
 
 
-            Upload photos (maximum 5)
+  <div className="mt-3">
+
+  <button
+    type="button"
+    disabled={photos.length >= 5}
+    onClick={() => fileInputRef.current?.click()}
+    className={`rounded-lg bg-tipdash-dark px-6 py-3 font-semibold text-white transition hover:opacity-90 ${
+      photos.length >= 5 ? "cursor-not-allowed opacity-50" : ""
+    }`}
+  >
+    + Add Photos
+  </button>
 
 
-            <input
+  <input
+    ref={fileInputRef}
+    name="photos"
+    type="file"
+    multiple
+    accept="image/*"
+    disabled={photos.length >= 5}
+    onChange={handlePhotoChange}
+    className="hidden"
+  />
 
-              name="photos"
-
-              type="file"
-
-              multiple
-
-              accept="image/*"
-
-              className="mt-2 block w-full text-black"
-
-            />
+</div>
 
 
-          </label>
+  <div className="mt-4 flex flex-wrap gap-3">
+
+    {previewUrls.map((url, index) => (
+
+      <div
+        key={url}
+        className="relative h-20 w-20 overflow-hidden rounded-lg"
+      >
+
+        <img
+          src={url}
+          alt={`Uploaded photo ${index + 1}`}
+          className="h-full w-full object-cover"
+        />
+
+
+        <button
+          type="button"
+          onClick={() => removePhoto(index)}
+          className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-tipdash-dark text-sm font-bold text-white"
+        >
+          ×
+        </button>
+
+      </div>
+
+    ))}
+
+  </div>
+
+
+  <p className="mt-3 text-sm text-gray-700">
+    {photos.length} {photos.length === 1 ? "photo" : "photos"} added • Maximum 5 photos
+  </p>
+
+
+</div>
 
 
 

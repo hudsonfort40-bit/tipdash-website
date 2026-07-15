@@ -1,23 +1,23 @@
 const reasons = [
   {
-    title: "Local Gold Coast Team",
+    title: "Local Team You Can Trust",
     description:
-      "We are a local rubbish removal team servicing homes, businesses and properties across the Gold Coast.",
+      "We are a Gold Coast owned and operated team that takes pride in helping our local community clear unwanted items and reclaim their spaces.",
   },
   {
-    title: "Fast & Reliable Service",
+    title: "Simple & Stress-Free Removal",
     description:
-      "Quick communication, flexible availability and efficient rubbish removal when you need it.",
+      "From small pickups to full clean outs, we make rubbish removal easy with clear communication and a hassle-free process.",
   },
   {
-    title: "Easy Quote Process",
+    title: "Responsible Disposal",
     description:
-      "Send us photos of your rubbish and we can provide a quick estimate with no complicated process.",
+      "We aim to recycle and divert as much waste as possible, helping reduce landfill and give unwanted items a better outcome.",
   },
   {
-    title: "Upfront Pricing",
+    title: "Honest Upfront Pricing",
     description:
-      "Clear quotes before the job starts, so you know exactly what to expect.",
+      "Clear quotes before the job starts, so you know what to expect without surprise costs.",
   },
 ];
 
@@ -25,31 +25,41 @@ export default function WhyChooseUs() {
   return (
     <section className="bg-white px-6 py-20">
       <div className="mx-auto max-w-6xl">
+
         <h2 className="text-center text-4xl font-bold text-black">
-          Why Choose TipDash?
+          Why Gold Coast Locals Choose TipDash
         </h2>
 
-        <p className="mx-auto mt-4 max-w-2xl text-center text-gray-700">
-          A reliable local rubbish removal service focused on making clean-ups
-          simple and stress-free.
+
+        <p className="mx-auto mt-4 max-w-3xl text-center text-gray-700">
+          More than just rubbish removal — we help homes, businesses and
+          property managers clear unwanted items with care, reliability and
+          responsible disposal.
         </p>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
+
           {reasons.map((reason) => (
             <div
               key={reason.title}
-              className="rounded-xl border-2 border-black bg-tipdash-light p-6"
+              className="rounded-xl border border-gray-200 bg-tipdash-light p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
             >
+
               <h3 className="text-xl font-bold text-tipdash-dark">
                 {reason.title}
               </h3>
 
-              <p className="mt-3 text-gray-700">
+
+              <p className="mt-3 leading-relaxed text-gray-700">
                 {reason.description}
               </p>
+
             </div>
           ))}
+
         </div>
+
       </div>
     </section>
   );

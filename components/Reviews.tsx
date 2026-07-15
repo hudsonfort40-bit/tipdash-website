@@ -23,49 +23,49 @@ export default function Reviews() {
 
       <div className="mx-auto max-w-6xl">
 
-
         <h2 className="text-center text-4xl font-bold text-black">
-          What Our Customers Say
+          Trusted by Gold Coast Locals
         </h2>
 
 
-        <p className="mx-auto mt-4 max-w-2xl text-center text-gray-700">
-          We pride ourselves on providing reliable rubbish removal with great
-          service from start to finish.
+        <p className="mx-auto mt-4 max-w-3xl text-center text-gray-700">
+          From small rubbish pickups to larger clean outs, we focus on making
+          every job simple, stress-free and done properly.
         </p>
 
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
 
-
           {reviews.map((review) => (
-
             <div
               key={review.name}
-              className="rounded-xl border-2 border-black bg-white p-6 shadow-sm"
+              className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
             >
 
-              <div className="text-xl">
+              <div className="text-lg">
                 ⭐⭐⭐⭐⭐
               </div>
 
 
-              <p className="mt-4 text-gray-700">
+              <p className="mt-5 leading-relaxed text-gray-700">
                 "{review.review}"
               </p>
 
 
-              <h3 className="mt-5 font-bold text-tipdash-dark">
-                {review.name}
-              </h3>
+              <div className="mt-6">
+                <h3 className="font-bold text-tipdash-dark">
+                  {review.name}
+                </h3>
+
+                <p className="text-sm text-gray-500">
+                  Gold Coast Customer
+                </p>
+              </div>
 
             </div>
-
           ))}
 
-
         </div>
-
 
       </div>
 

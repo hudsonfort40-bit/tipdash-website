@@ -29,6 +29,11 @@ const faqs = [
     answer:
       "Yes. TipDash services suburbs across the Gold Coast, including central, northern, southern and western areas.",
   },
+  {
+    question: "Do you recycle or reuse items where possible?",
+    answer:
+      "Yes. We aim to recycle and divert as much waste as possible, and where items can be reused or donated, we look for better options before disposal.",
+  },
 ];
 
 
@@ -37,7 +42,6 @@ export default function FAQ() {
     <section className="bg-white px-6 py-20">
 
       <div className="mx-auto max-w-4xl">
-
 
         <h2 className="text-center text-4xl font-bold text-black">
           Frequently Asked Questions
@@ -50,34 +54,52 @@ export default function FAQ() {
         </p>
 
 
-
-        <div className="mt-12 grid gap-6">
-
+        <div className="mt-12 grid gap-5">
 
           {faqs.map((faq) => (
 
-            <div
+            <details
               key={faq.question}
-              className="rounded-xl border-2 border-black bg-tipdash-light p-6"
+              className="group overflow-hidden rounded-xl bg-tipdash-light shadow-sm transition hover:shadow-md"
             >
 
-              <h3 className="text-xl font-bold text-tipdash-dark">
-                {faq.question}
-              </h3>
+              <summary className="flex cursor-pointer items-center justify-between gap-4 p-6 text-lg font-bold text-tipdash-dark">
+
+                <span>
+                  {faq.question}
+                </span>
 
 
-              <p className="mt-3 text-gray-700">
-                {faq.answer}
-              </p>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-tipdash-dark text-xl font-bold text-white transition-transform duration-300 group-open:rotate-180">
+
+                  <span className="group-open:hidden">
+                    +
+                  </span>
 
 
-            </div>
+                  <span className="hidden group-open:block">
+                    −
+                  </span>
+
+                </span>
+
+              </summary>
+
+
+              <div className="bg-white px-6 pb-6 pt-6">
+
+                <p className="leading-relaxed text-gray-700">
+                  {faq.answer}
+                </p>
+
+              </div>
+
+
+            </details>
 
           ))}
 
-
         </div>
-
 
       </div>
 
